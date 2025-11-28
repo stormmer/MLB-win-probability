@@ -1,0 +1,14 @@
+{
+  "accuracy": 0.5363020329138432,
+  "roc_auc": 0.4818014036088272,
+  "log_loss": 0.7183490767804661,
+  "brier_score": 0.2606623808853155,
+  "model_type": "xgboost",
+  "n_test_samples": 1033,
+  "confusion_matrix": {
+    "tn": 444,
+    "fp": 192,
+    "fn": 287,
+    "tp": 110
+  }
+}
