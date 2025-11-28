@@ -4,7 +4,7 @@
     "builder": "NIXPACKS"
   },
   "deploy": {
-    "startCommand": "python -m gunicorn --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --access-logfile - --error-logfile - dashboard.wsgi:server",
+    "startCommand": "streamlit run dashboard/streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true",
     "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 10
   }

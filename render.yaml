@@ -1,10 +1,9 @@
 services:
   - type: web
-    name: mlb-win-probability-dashboard
+    name: mlb-win-probability-streamlit
     env: python
-    buildCommand: pip install -r requirements.txt
-    startCommand: gunicorn --config gunicorn_config.py dashboard.wsgi:server
+    buildCommand: pip install -r streamlit_requirements.txt
+    startCommand: streamlit run dashboard/streamlit_app.py --server.port $PORT --server.address 0.0.0.0 --server.headless true
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
-
