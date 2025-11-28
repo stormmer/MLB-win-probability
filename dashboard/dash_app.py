@@ -294,6 +294,7 @@ def get_team_options():
         return [{'label': team, 'value': team} for team in teams]
     except Exception as e:
         logger.warning(f"Error loading teams: {e}. Dashboard will work once data is available.")
+        # Return empty list instead of crashing
         return []
 
 def get_history_filter_options():
@@ -304,12 +305,20 @@ def get_history_filter_options():
         return [{'label': 'All Teams', 'value': 'ALL'}] + [{'label': t, 'value': t} for t in teams]
     except Exception as e:
         logger.warning(f"Error loading teams for history filter: {e}")
+        # Return at least "All Teams" option
         return [{'label': 'All Teams', 'value': 'ALL'}]
 
-# App layout
-team_options = get_team_options()
-history_filter_options = get_history_filter_options()
-theme = get_dash_theme()
+# App layout - initialize with error handling
+try:
+    team_options = get_team_options()
+    history_filter_options = get_history_filter_options()
+    theme = get_dash_theme()
+except Exception as e:
+    logger.error(f"Error initializing app layout: {e}")
+    # Set defaults to prevent crash
+    team_options = []
+    history_filter_options = [{'label': 'All Teams', 'value': 'ALL'}]
+    theme = get_dash_theme()
 
 app.layout = html.Div([
     html.Div([

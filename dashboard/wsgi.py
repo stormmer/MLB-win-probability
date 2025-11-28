@@ -15,27 +15,28 @@ sys.path.insert(0, str(Path(__file__).parent))
 # Set working directory to project root
 os.chdir(str(project_root))
 
-# Import the Dash app
+# Import the Dash app with error handling
 try:
     # Try importing from dashboard.dash_app (when running from project root)
     from dashboard.dash_app import app
-except ImportError:
+except ImportError as e1:
     try:
         # Fallback: try importing directly (when running from dashboard directory)
         from dash_app import app
-    except ImportError as e:
-        print(f"Import error: {e}")
+    except ImportError as e2:
+        print(f"Import error (method 1): {e1}")
+        print(f"Import error (method 2): {e2}")
         print(f"Python path: {sys.path}")
         print(f"Current directory: {os.getcwd()}")
+        print(f"Project root: {project_root}")
         raise
 
 # For WSGI servers (Gunicorn, uWSGI, etc.)
 # Gunicorn expects a 'server' variable
-server = app.server
-
-# Make sure app is configured correctly
 if not hasattr(app, 'server'):
-    raise RuntimeError("Dash app.server not found")
+    raise RuntimeError("Dash app.server not found - app may not be initialized correctly")
+
+server = app.server
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 8050))
