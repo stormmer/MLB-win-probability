@@ -809,5 +809,8 @@ def update_history_content(active_tab, history_filter):
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=8050)
+    import os
+    port = int(os.environ.get("PORT", 8050))
+    debug = os.environ.get("FLASK_ENV") != "production"
+    app.run_server(debug=debug, host="0.0.0.0", port=port)
 
