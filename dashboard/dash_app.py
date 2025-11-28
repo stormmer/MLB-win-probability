@@ -51,19 +51,34 @@ def load_data_and_model() -> Tuple[pd.DataFrame, Dict]:
     """
     global _df, _model_data
     
-    if _df is None:
-        processed_file = get_data_path(config, "games_processed.csv", subdir="processed")
-        if not processed_file.exists():
-            raise FileNotFoundError(f"Processed dataset not found: {processed_file}")
-        _df = pd.read_csv(processed_file)
-        _df['game_date'] = pd.to_datetime(_df['game_date'])
-        logger.info(f"Loaded dataset with {len(_df)} games")
-    
-    if _model_data is None:
-        _model_data = load_model(config)
-        logger.info("Loaded model")
-    
-    return _df, _model_data
+    try:
+        if _df is None:
+            processed_file = get_data_path(config, "games_processed.csv", subdir="processed")
+            if not processed_file.exists():
+                logger.warning(f"Processed dataset not found: {processed_file}. Creating empty dataframe.")
+                _df = pd.DataFrame(columns=['team', 'opponent', 'game_date'])
+            else:
+                _df = pd.read_csv(processed_file)
+                _df['game_date'] = pd.to_datetime(_df['game_date'])
+                logger.info(f"Loaded dataset with {len(_df)} games")
+        
+        if _model_data is None:
+            try:
+                _model_data = load_model(config)
+                logger.info("Loaded model")
+            except Exception as e:
+                logger.warning(f"Could not load model: {e}. App will work but predictions may fail.")
+                _model_data = {'model': None, 'scaler': None, 'feature_cols': [], 'model_type': 'none'}
+        
+        return _df, _model_data
+    except Exception as e:
+        logger.error(f"Error in load_data_and_model: {e}")
+        # Return empty defaults to prevent crash
+        if _df is None:
+            _df = pd.DataFrame(columns=['team', 'opponent', 'game_date'])
+        if _model_data is None:
+            _model_data = {'model': None, 'scaler': None, 'feature_cols': [], 'model_type': 'none'}
+        return _df, _model_data
 
 
 def get_feature_importance(model_data: Dict) -> pd.DataFrame:
