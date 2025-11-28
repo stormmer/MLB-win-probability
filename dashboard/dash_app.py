@@ -32,6 +32,9 @@ logger = setup_logger()
 app = Dash(__name__)
 app.title = "MLB Win Probability Dashboard"
 
+# Configure for production
+app.config.suppress_callback_exceptions = True
+
 # Load configuration
 config = get_config()
 
